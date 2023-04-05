@@ -3,15 +3,15 @@ import pickle
 import struct
 import threading
 import time
-import random
 import action
 import psutil
 import tracemalloc
+import random
 
 # import singleton
 
-# ip = "192.168.0.5"
-ip = "localhost"
+ip = "10.37.129.3"
+# ip = "localhost"
 
 tracemalloc.start()
 
@@ -97,17 +97,18 @@ class CarbonIface(object):
         finally:
             s.close()
 
-while True:
-    time.sleep(10)
-    # def sendData():
-    #     fields = ['temperature','humidity','atmosphericPressure','amountSnowfall','roadTemperature','freezingPoint','waterFilmThickness','snowHeight','iceRatio','coefficientOfFriction','roadConditions','signalStrength']
-    #     carbon = CarbonIface(ip, 2004)##서버아이피주소로 변경
-    #     datas = singleton.DataLogger.get_data()
-    #     ts = time.time()
-    #     for i in range(0,len(fields)):
-    #         carbon.add_data("snowmelting." + fields[i], datas[i].get('value'), ts)
-    #     carbon.send_data()
-    # sendData()
+# while True:
+#     time.sleep(10)
+#     def sendData():
+#         fields = ['temperature','humidity','atmosphericPressure','amountSnowfall','roadTemperature','freezingPoint','waterFilmThickness','snowHeight','iceRatio','coefficientOfFriction','roadConditions','signalStrength']
+#         carbon = CarbonIface(ip, 2004)##서버아이피주소로 변경
+#         datas = singleton.DataLogger.get_data()
+#         ts = time.time()
+#         for i in range(0,len(fields)):
+#             carbon.add_data("snowmelting." + fields[i], datas[i].get('value'), ts)
+#         carbon.send_data()
+#         action.all()
+#         return datas
     def sendData():
             fields = ['temperature','humidity','atmosphericPressure','amountSnowfall','roadTemperature','freezingPoint','waterFilmThickness','snowHeight','iceRatio','coefficientOfFriction','roadConditions','signalStrength']
             carbon = CarbonIface(ip, 2004)

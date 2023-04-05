@@ -7,7 +7,6 @@ import pickle
 import struct
 import yaml
 import config
-# import singleton
 
 class CarbonIface(object):
 
@@ -90,7 +89,7 @@ class readSet:
     load_Data = 0
 
 def get_average(data):
-    values = [point[0] for point in data if point[0] not in [None, -100, -200,-300,-400,-500]]
+    values = [point[0] for point in data if point[0] not in [None]]
     if values:
         average = sum(values) / len(values)
         return round(average, 1)

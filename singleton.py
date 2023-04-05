@@ -40,8 +40,8 @@ class DataLogger(object):
             cls._init = True
     
     # Initializing Modbus-RTU
-    # driver = minimalmodbus.Instrument('/dev/tty.usbserial-1110', 0x01, minimalmodbus.MODE_RTU, debug=False) ##서버USB로 변경해줘야함
-    driver = minimalmodbus.Instrument(config.BACKEND_CONFIG['usbadd'], 0x01, minimalmodbus.MODE_RTU, debug=False) ##서버USB로 변경해줘야함
+    driver = minimalmodbus.Instrument(config['usbadd'], 0x01, minimalmodbus.MODE_RTU, debug=False) ##서버USB로 변경해줘야함
+    # driver = minimalmodbus.Instrument(config.BACKEND_CONFIG['usbadd'], 0x01, minimalmodbus.MODE_RTU, debug=False) ##서버USB로 변경해줘야함
     driver.serial.baudrate = 9600
     driver.serial.bytesize = 8
     driver.serial.parity = serial.PARITY_NONE
