@@ -4,14 +4,11 @@ import struct
 import threading
 import time
 import action
-import psutil
 import tracemalloc
 import random
-
+import datetime
 # import singleton
-
-ip = "10.37.129.3"
-# ip = "localhost"
+import config
 
 tracemalloc.start()
 
@@ -97,37 +94,68 @@ class CarbonIface(object):
         finally:
             s.close()
 
-# while True:
-#     time.sleep(10)
-#     def sendData():
-#         fields = ['temperature','humidity','atmosphericPressure','amountSnowfall','roadTemperature','freezingPoint','waterFilmThickness','snowHeight','iceRatio','coefficientOfFriction','roadConditions','signalStrength']
-#         carbon = CarbonIface(ip, 2004)##서버아이피주소로 변경
-#         datas = singleton.DataLogger.get_data()
-#         ts = time.time()
-#         for i in range(0,len(fields)):
-#             carbon.add_data("snowmelting." + fields[i], datas[i].get('value'), ts)
-#         carbon.send_data()
-#         action.all()
-#         return datas
+while True:
+    time.sleep(5)
+    # def sendData():
+    #     fields = ['temperature','humidity','atmosphericPressure','amountSnowfall','roadTemperature','freezingPoint','waterFilmThickness','snowHeight','iceRatio','coefficientOfFriction','roadConditions','signalStrength']
+    #     carbon = CarbonIface(config.BACKEND_CONFIG['ip'], 2004)##서버아이피주소로 변경
+    #     datas = singleton.DataLogger.get_data()
+    #     ts = time.time()
+    #     for i in range(0,len(fields)):
+    #         carbon.add_data("snowmelting." + fields[i], datas[i].get('value'), ts)
+    #     carbon.send_data()
+    #     action.all()
+    #     return datas
     def sendData():
             fields = ['temperature','humidity','atmosphericPressure','amountSnowfall','roadTemperature','freezingPoint','waterFilmThickness','snowHeight','iceRatio','coefficientOfFriction','roadConditions','signalStrength']
-            carbon = CarbonIface(ip, 2004)
+            carbon = CarbonIface(config.BACKEND_CONFIG['ip'], 2004)
             datas = []
             for i in fields:
-                    if i == "roadConditions":
-                        test = random.uniform(0,0.7)*10
-                        datas.append(round(test, 0))
-                        print(round(test, 0))
+                    if i == "roadTemperature":
+                        test = round(random.uniform(18.0, 22.0), 1)
+                        datas.append(test)
+                    elif i == "roadConditions":
+                        test = 6    
+                        datas.append(test)
+                        print(test, "도로상황")
+                    elif i == "temperature":
+                        test = round(random.uniform(13.0, 13.5), 1)
+                        datas.append(test)
+                    elif i == "humidity":
+                        test = round(random.uniform(40.0, 60.0), 1)
+                        datas.append(test)
+                    elif i == "atmosphericPressure":
+                        test = round(random.uniform(850.0, 985.0), 1)
+                        datas.append(test)
+                    elif i == "waterFilmThickness":
+                        test = round(random.uniform(200.0, 300.0), 1)
+                        datas.append(test)
+                    elif i == "amountSnowfall":
+                        test = round(random.uniform(0.0, 0.5), 1)
+                        datas.append(test)
                     elif i == "signalStrength":
+                        test = 1
+                        datas.append(test)
+                    elif i == "iceRatio":
+                        test = 10
+                        datas.append(test)
+                    elif i == "amountSnowfall":
                         test = 0
                         datas.append(test)
-                    elif i == "temperature":
-                        test = random.uniform(-0.2,1.6)*10
-                        datas.append(round(test, 0))
                     else:
                         datas.append(random.uniform(0,1)*10)
                         
-            ts = time.time()
+            ts = int(time.time())
+            # ts = int(time.time()+(9*3600))
+            dt = datetime.datetime.utcfromtimestamp(ts)
+            year = dt.year  # 년
+            month = dt.month  # 월
+            day = dt.day  # 일
+            hour = dt.hour  # 시
+            minute = dt.minute  # 분
+            second = dt.second  # 초
+
+            # print(f"년: {year}, 월: {month}, 일: {day}, 시: {hour}, 분: {minute}, 초: {second}")
             for i in range(0,len(fields)):
                 if fields[i] == '1':
                     carbon.add_data("snowmelting." + fields[i], -300, ts)
@@ -135,13 +163,7 @@ class CarbonIface(object):
                 else:
                     carbon.add_data("snowmelting." + fields[i], datas[i], ts)
             carbon.send_data()
-            print(datas)
+            print(datas, ts,"시간..")
             action.all()
             return datas
-    process = psutil.Process()
-    mem_info = process.memory_info()
-    mem_usage = mem_info.rss / 1024 / 1024 # KB -> MB
-    print("Current memory usage: {} MB".format(mem_usage))
     sendData()
-    current, peak = tracemalloc.get_traced_memory()
-    print(f"Current memory usage: {current / 10**6}MB")

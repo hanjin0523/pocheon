@@ -4,7 +4,7 @@ import traceback
 import time
 import math
 import config
-print(minimalmodbus.__version__)
+
 
 print() # Pretty Hack
 
@@ -39,9 +39,9 @@ class DataLogger(object):
             self.data = data
             cls._init = True
     
+    # driver = minimalmodbus.Instrument(config.BACKEND_CONFIG['ip'], 0x01, minimalmodbus.MODE_TCP, debug=False)
     # Initializing Modbus-RTU
-    driver = minimalmodbus.Instrument(config['usbadd'], 0x01, minimalmodbus.MODE_RTU, debug=False) ##서버USB로 변경해줘야함
-    # driver = minimalmodbus.Instrument(config.BACKEND_CONFIG['usbadd'], 0x01, minimalmodbus.MODE_RTU, debug=False) ##서버USB로 변경해줘야함
+    driver = minimalmodbus.Instrument(config.BACKEND_CONFIG['usbadd'], 0x01, minimalmodbus.MODE_RTU, debug=False) ##서버USB로 변경해줘야함
     driver.serial.baudrate = 9600
     driver.serial.bytesize = 8
     driver.serial.parity = serial.PARITY_NONE
@@ -81,16 +81,14 @@ class DataLogger(object):
     def get_data():
         report_data = []
         for i in range(1, 13):
-            print(report_data)
+            # print(report_data)
             map_addr = 0
             hex_addr = 0
             map_addr = i * 2 - 1
             hex_addr = map_addr - 1
             try:
                 test_float = DataLogger.driver.read_float(hex_addr, functioncode=0x03, byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP)
-                print(test_float)
-                if(math.isnan(test_float)):
-                    test_float = -2
+                # print(test_float)
                 report_data.append({'register': map_addr + 30000, 'value': test_float})
             except minimalmodbus.IllegalRequestError as e:
                 # 슬레이브가 불법 요청을 받았습니다.
@@ -108,33 +106,32 @@ class DataLogger(object):
                 # Base class for Modbus communication exceptions.
                 # Inherits from IOError, which is an alias for OSError in Python3.
                 report_data.append({'register': map_addr + 30000, 'value': -999})
-        time.sleep(0.1)
+        time.sleep(1)
         return report_data
-DataLogger.get_data()
-    # def set_data(num):
+    
+    def set_data(num):
         
-    #     powerNum = float(num)
-    #     print(f"{Color.bold}{Color.blgreen}Reading test is {Color.success}fine\x1b[0m.\n\n")
-    #     # Testing Write Registers...
-
-    #     print(f"Test Write Resister {Color.blpurple}30025{Color.reset}\n")
+        powerNum = float(num)
+        print(f"{Color.bold}{Color.blgreen}Reading test is {Color.success}fine\x1b[0m.\n\n")
+        # Testing Write Registers...
+        print(f"Test Write Resister {Color.blpurple}30025{Color.reset}\n")
         
-    #     try:
-    #         map_addr = 25
-    #         hex_addr = map_addr - 1
-    #         function_code = 0x10
+        try:
+            map_addr = 25
+            hex_addr = map_addr - 1
+            function_code = 0x10
 
-    #         print(f"Map Addr: {Color.blgreen}3{map_addr:04d}{Color.reset}")
-    #         print(f"Hex Addr: 0x{Color.blgreen}{hex_addr:04x}{Color.reset}")
-    #         print(f"FunctionCode: 0x{Color.blgreen}{function_code:02x}{Color.reset}")
-    #         print(f"This Packet's Byteorder is {Color.memo}Little_Swap{Color.reset}")
+            print(f"Map Addr: {Color.blgreen}3{map_addr:04d}{Color.reset}")
+            print(f"Hex Addr: 0x{Color.blgreen}{hex_addr:04x}{Color.reset}")
+            print(f"FunctionCode: 0x{Color.blgreen}{function_code:02x}{Color.reset}")
+            print(f"This Packet's Byteorder is {Color.memo}Little_Swap{Color.reset}")
 
-    #         DataLogger.driver.write_float(hex_addr, powerNum, byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP)
-    #     except minimalmodbus.IllegalRequestError as e:
-    #         print(f"{Color.blred}Error: {e}{Color.reset}")
-    #         print(f"{Color.red}30025는 functioncode 0x10 으로 쓸 수 없는 레지스터{Color.reset}")
-    #         DataLogger.report_data.append({'register': map_addr + 30000, 'value': DataLogger.get_error_value(e)})
-    #     return ##2.13일 추가로직
+            DataLogger.driver.write_float(hex_addr, powerNum, byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP)
+        except minimalmodbus.IllegalRequestError as e:
+            print(f"{Color.blred}Error: {e}{Color.reset}")
+            print(f"{Color.red}30025는 functioncode 0x10 으로 쓸 수 없는 레지스터{Color.reset}")
+            DataLogger.report_data.append({'register': map_addr + 30000, 'value': DataLogger.get_error_value(e)})
+        return ##2.13일 추가로직
 
         # print(f"{Color.success}Fine{Color.reset}") 
 
@@ -168,4 +165,4 @@ DataLogger.get_data()
 #                 report_data.append({'register': map_addr + 30000, 'value': -999})
 #     time.sleep(0.1)
 #     return report_data
-
+DataLogger.get_data()

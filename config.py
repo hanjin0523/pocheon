@@ -1,8 +1,8 @@
 
 BACKEND_CONFIG = {
-    'ip' : '10.37.129.3',
-    'dbport' : ':8080',
-    'usbadd' : '/dev/ttyUSB0',
+    'ip' : 'localhost', #서버ip등록
+    'dbport' : ':80',
+    'usbadd' : '/dev/ttyCES',
     # 'usbadd' : '/dev/tty.usbserial-110',
     'metric' : 'snowmelting.'
 }
