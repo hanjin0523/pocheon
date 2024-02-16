@@ -115,9 +115,14 @@ def get_road_conditions():
         readSet.load_Data = average_value
     return {'data':field, 'value':average_value}
 
+count = 0
 def sendOnOff(num):
-    # logging.info(f'POWER : {num} // readSet: {readSet.__dict__}')
-    logging.info(f'POWER : {num}')
+    global count
+    if count == 24:
+        logging.info(f'POWER : {num}')
+        count = 0
+    else:
+        count += 1
     fields = 'signal'
     carbon = CarbonIface(config.BACKEND_CONFIG['ip'], 2004)
     datas = ''
@@ -241,7 +246,7 @@ def clear_file():
     with open("/Users/hanjinjang/Desktop/unitTest/app.log", 'w') as file:
         pass
 
-schedule.every(120).days.do(clear_file)
+schedule.every(180).days.do(clear_file)
 
 def run_schedule():
     while True:
