@@ -9,9 +9,9 @@ import yaml
 import config
 import dataBaseMaria
 import logging
-# import singleton
-logging.basicConfig(filename='app.log', filemode='a', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-mariadb = dataBaseMaria.DatabaseMaria('localhost', 3306, 'jang', 'jang','pochen','utf8')
+import singleton
+# logging.basicConfig(filename='app.log', filemode='a', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+# mariadb = dataBaseMaria.DatabaseMaria('localhost', 3306, 'jang', 'jang','pochen','utf8')
 
 class CarbonIface(object):
 
@@ -129,18 +129,20 @@ def sendOnOff(num):
     ts = time.time()
     if num == False:
         carbon.add_data(config.BACKEND_CONFIG['metric']+ fields, 0, ts)
+        singleton.DataLogger.set_data(0)
         print("전원OFF서버전송")
     if num == True:
-        carbon.add_data(config.BACKEND_CONFIG['metric']+ fields, 1, ts) 
+        carbon.add_data(config.BACKEND_CONFIG['metric']+ fields, 1, ts)
+        singleton.DataLogger.set_data(1) 
         print("전원ON서버전송")
     carbon.send_data()
     return None
 
 
 def readSetting():
-    # with open('/home/ces/backend/start_action.yaml','r') as file:
+    with open('/home/ces/backend/start_action.yaml','r') as file:
     # with open('/home/ces_sanchez/backend/start_action.yaml','r') as file:
-    with open('/Users/hanjinjang/Desktop/Project/snowmelting/backend/start_action.yaml','r') as file:
+    # with open('/Users/hanjinjang/Desktop/Project/snowmelting/backend/start_action.yaml','r') as file:
         data = yaml.safe_load(file)
         readSet.read_condition = data['data']
         readSet.select_Check = data['select']
@@ -149,12 +151,12 @@ def readSetting():
     
 ##신규로직
 def readManualSetting():
-    with open('/Users/hanjinjang/Desktop/Project/snowmelting/backend/manual_btn_status.yaml','r') as file:
+    with open('/home/ces/backend/manual_btn_status.yaml','r') as file:
         readManual.manual_value = yaml.safe_load(file)
         print(readManual.manual_value,"<><><><>manual_value<><><><>")
         return None
 def readManualMode():
-    with open('/Users/hanjinjang/Desktop/Project/snowmelting/backend/manual_mode_status.yaml','r') as file:
+    with open('/home/ces/backend/manual_mode_status.yaml','r') as file:
         readManual.manual_mode = yaml.safe_load(file)
         print(readManual.manual_mode,"<><><><>manual_mode<><><><>")
         return None
@@ -199,7 +201,6 @@ class Operating:
         try:
             if not readManual.manual_mode:
                 oper_bool = Operating.oper_bool()
-                print(oper_bool,"boolean----------")
                 if oper_bool is None:  # test1 값이 None인 경우
                     raise ValueError("Error: operating_condition returned None")
                 return sendOnOff(oper_bool)
@@ -238,24 +239,24 @@ def all():
         function()
 
 
-import schedule
-import time
-import threading
+# import schedule
+# import time
+# import threading
 
-def clear_file():
-    with open("/Users/hanjinjang/Desktop/unitTest/app.log", 'w') as file:
-        pass
+# def clear_file():
+#     with open("/Users/hanjinjang/Desktop/unitTest/app.log", 'w') as file:
+#         pass
 
-schedule.every(180).days.do(clear_file)
+# schedule.every(180).days.do(clear_file)
 
-def run_schedule():
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+# def run_schedule():
+#     while True:
+#         schedule.run_pending()
+#         time.sleep(1)
 
-# Run the schedule in a separate thread
-thread = threading.Thread(target=run_schedule)
-thread.start()
+# # Run the schedule in a separate thread
+# thread = threading.Thread(target=run_schedule)
+# thread.start()
 
-# You can do other tasks here
-print("The schedule is running in a separate thread.")
+# # You can do other tasks here
+# print("The schedule is running in a separate thread.")
