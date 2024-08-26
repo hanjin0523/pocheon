@@ -157,7 +157,6 @@ while True:
             minute = dt.minute  # 분
             second = dt.second  # 초
 
-            # print(f"년: {year}, 월: {month}, 일: {day}, 시: {hour}, 분: {minute}, 초: {second}")
             for i in range(0,len(fields)):
                 if fields[i] == '1':
                     carbon.add_data("snowmelting." + fields[i], -300, ts)
